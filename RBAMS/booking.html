@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Room | StayEase</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <h2 class="logo">StayEase</h2>
+    <ul class="nav-links"></ul>
+</nav>
+
+<section class="booking">
+    <div class="booking-box">
+        <h2>Confirm Your Stay</h2>
+        <form id="bookingForm">
+            <label>Selected Room</label>
+            <input type="text" id="displayRoomName" readonly>
+
+            <label>Check-in Date</label>
+            <input type="date" required>
+
+            <label>Check-out Date</label>
+            <input type="date" required>
+
+            <label>Guests</label>
+            <input type="number" min="1" max="5" value="1" required>
+
+            <button type="submit">Confirm Booking</button>
+        </form>
+    </div>
+</section>
+
+<script src="js/script.js"></script>
+</body>
+</html>
