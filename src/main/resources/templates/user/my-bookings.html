@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>My Bookings | Luxury Homes</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+</head>
+<body style="background-color:var(--background);">
+
+<nav class="navbar">
+    <h2 class="logo">LUXURY HOMES</h2>
+    <ul class="nav-links">
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/logout}" class="btn-login">Logout</a></li>
+    </ul>
+</nav>
+
+<section class="my-bookings-container">
+    <div class="booking-header-main">
+        <h1>My Bookings</h1>
+        <p style="color:var(--text-muted);">Manage your upcoming stays and history</p>
+    </div>
+
+    <div th:if="${success}" style="background:#d1fae5;color:#065f46;padding:14px 20px;border-radius:10px;margin:20px 0;"
+         th:text="${success}"></div>
+
+    <!-- Empty state -->
+    <div th:if="${#lists.isEmpty(bookings)}"
+         style="text-align:center;padding:80px 20px;background:var(--card-bg);border-radius:24px;border:1px solid var(--glass-border);margin-top:30px;">
+        <i class="fas fa-calendar-times" style="font-size:50px;color:var(--primary-light);margin-bottom:20px;display:block;"></i>
+        <h3 style="color:white;margin-bottom:10px;">No bookings found</h3>
+        <p style="color:var(--text-muted);margin-bottom:25px;">You haven't booked any rooms yet.</p>
+        <a th:href="@{/#rooms}" class="btn-login" style="text-decoration:none;">Book a Room Now</a>
+    </div>
+
+    <!-- Booking list -->
+    <div th:if="${!#lists.isEmpty(bookings)}" id="bookingHistoryList" style="margin-top:40px;">
+        <div th:each="item : ${bookings}" class="booking-card-horizontal">
+            <div class="booking-img">
+                <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=1000" alt="Room"/>
+            </div>
+            <div class="booking-details">
+                <div class="card-top">
+                    <h3 th:text="${item.roomName}">Room Name</h3>
+                    <span th:class="'status-badge ' + ${item.status}" th:text="${#strings.capitalize(item.status)}">Status</span>
+                </div>
+                <div class="booking-info-grid">
+                    <div class="info-item">
+                        <small>CHECK-IN</small>
+                        <p>
+                            <i class="far fa-calendar-check" style="margin-right:8px;color:var(--primary-light);"></i>
+                            <span th:text="${#temporals.format(item.checkIn, 'dd MMM yyyy')}"></span>
+                        </p>
+                    </div>
+                    <div class="info-item">
+                        <small>CHECK-OUT</small>
+                        <p>
+                            <i class="far fa-calendar-times" style="margin-right:8px;color:var(--accent);"></i>
+                            <span th:text="${#temporals.format(item.checkOut, 'dd MMM yyyy')}"></span>
+                        </p>
+                    </div>
+                    <div class="info-item">
+                        <small>BOOKING ID</small>
+                        <p th:text="${item.bookingId}">SE-XXXX</p>
+                    </div>
+                </div>
+                <div class="card-footer"
+                     style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--glass-border);padding-top:20px;">
+                    <div class="guest-info">
+                        <span style="color:var(--text-muted);font-size:13px;">
+                            <i class="fas fa-users" style="margin-right:5px;"></i>
+                            <span th:text="${item.guests}"></span> Guests
+                        </span>
+                    </div>
+                    <a th:href="@{/cancel-booking/{id}(id=${item.id})}"
+                       onclick="return confirm('Are you sure you want to cancel this booking?')">
+                        <button class="btn-cancel">
+                            <i class="fas fa-times-circle"></i> Cancel Booking
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer" style="margin-top:100px;">
+    <div class="footer-bottom">
+        <p>&copy; 2026 Luxury Homes. All rights reserved.</p>
+    </div>
+</footer>
+
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

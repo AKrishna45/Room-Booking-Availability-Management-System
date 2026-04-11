@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Book Room | Luxury Homes</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <h2 class="logo">Luxury Homes</h2>
+    <ul class="nav-links">
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/my-bookings}">My Bookings</a></li>
+        <li><a th:href="@{/logout}" class="btn-login">Logout</a></li>
+    </ul>
+</nav>
+
+<section class="booking">
+    <div class="booking-box">
+        <h2>Confirm Your Stay</h2>
+
+        <div th:if="${error}" style="color:red;margin-bottom:10px;" th:text="${error}"></div>
+        <div th:if="${success}" style="color:green;margin-bottom:10px;" th:text="${success}"></div>
+
+        <form method="POST" th:action="@{/booking}" th:object="${bookingDto}">
+
+            <label>Selected Room</label>
+            <input type="text" th:field="*{roomName}" th:value="${room}" readonly/>
+
+            <div style="display:flex;gap:10px;">
+                <div style="flex:1;">
+                    <label>Mobile Number</label>
+                    <input type="text" th:field="*{mobile}" placeholder="10-digit mobile"
+                           required pattern="[0-9]{10}"/>
+                    <span th:if="${#fields.hasErrors('mobile')}" style="color:red;font-size:12px;"
+                          th:errors="*{mobile}"></span>
+                </div>
+                <div style="flex:1;">
+                    <label>Your Age</label>
+                    <input type="number" th:field="*{age}" min="18" required/>
+                    <span th:if="${#fields.hasErrors('age')}" style="color:red;font-size:12px;"
+                          th:errors="*{age}"></span>
+                </div>
+            </div>
+
+            <label>Check-in &amp; Check-out</label>
+            <div style="display:flex;gap:10px;">
+                <input type="date" th:field="*{checkIn}" required
+                       th:attr="min=${#dates.format(#dates.createNow(),'yyyy-MM-dd')}"/>
+                <input type="date" th:field="*{checkOut}" required/>
+            </div>
+            <div th:if="${#fields.hasErrors('checkIn')}" style="color:red;font-size:12px;"
+                 th:errors="*{checkIn}"></div>
+
+            <label>Number of Guests (Max 4)</label>
+            <input type="number" th:field="*{guests}" min="1" max="4" required/>
+            <span th:if="${#fields.hasErrors('guests')}" style="color:red;font-size:12px;"
+                  th:errors="*{guests}"></span>
+
+            <label>Payment Method</label>
+            <select th:field="*{paymentType}"
+                    style="width:100%;padding:12px;border-radius:5px;border:1px solid #e2e8f0;margin-bottom:15px;">
+                <option value="Online">Online Payment</option>
+                <option value="Offline">Pay at Hotel (Offline)</option>
+            </select>
+
+            <button type="submit">Confirm Booking</button>
+        </form>
+    </div>
+</section>
+
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

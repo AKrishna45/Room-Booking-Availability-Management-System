@@ -1,0 +1,7 @@
+com\roombooking\dto\Dtos$AdminProfileDto.class
+com\roombooking\dto\Dtos$RegisterDto.class
+com\roombooking\dto\Dtos$BookingDto.class
+com\roombooking\dto\Dtos.class
+com\roombooking\dto\Dtos$RoomDto.class
+com\roombooking\dto\Dtos$VacancyInfo.class
+com\roombooking\dto\Dtos$LoginDto.class

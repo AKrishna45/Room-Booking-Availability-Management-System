@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Admin Dashboard | Luxury Homes</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+</head>
+<body>
+<div class="admin-wrapper">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-logo">
+            <h2>LH Admin</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#rooms-section" class="sidebar-link active">
+                <i class="fas fa-door-open"></i> Rooms
+            </a>
+            <a href="#bookings-section" class="sidebar-link">
+                <i class="fas fa-calendar-check"></i> Bookings
+            </a>
+            <a href="#settings-section" class="sidebar-link">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <a th:href="@{/admin/logout}" class="sidebar-link logout-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="admin-main">
+        <div class="admin-topbar">
+            <h1>Admin Console</h1>
+            <span class="admin-email" th:text="${adminEmail}">admin@luxuryhomes.com</span>
+        </div>
+
+        <!-- Flash messages -->
+        <div th:if="${roomSuccess}" class="alert alert-success" th:text="${roomSuccess}"></div>
+        <div th:if="${profileSuccess}" class="alert alert-success" th:text="${profileSuccess}"></div>
+        <div th:if="${profileError}" class="alert alert-error" th:text="${profileError}"></div>
+
+        <div class="admin-grid">
+
+            <!-- LEFT COLUMN -->
+            <div class="admin-left">
+
+                <!-- ── Add/Update Room ── -->
+                <div class="admin-card" id="rooms-section">
+                    <h2><i class="fas fa-plus-circle"></i> Manage Room</h2>
+                    <form method="POST" th:action="@{/admin/room/save}">
+                        <div class="form-group">
+                            <label>Room Type</label>
+                            <input type="text" name="roomType" placeholder="e.g. Deluxe Room" required/>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Quantity</label>
+                                <input type="number" name="totalRooms" placeholder="10" min="1" required/>
+                            </div>
+                            <div class="form-group">
+                                <label>Price (₹)</label>
+                                <input type="number" name="price" placeholder="2000" min="1" required/>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Save Room</button>
+                    </form>
+                </div>
+
+                <!-- ── Room Inventory ── -->
+                <div class="admin-card">
+                    <h2><i class="fas fa-list"></i> Inventory</h2>
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>Type</th><th>Qty</th><th>Price</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="r : ${rooms}">
+                                <td th:text="${r.roomType}">Room</td>
+                                <td th:text="${r.totalRooms}">0</td>
+                                <td th:text="'₹' + ${r.price}">₹0</td>
+                                <td>
+                                    <form method="POST" th:action="@{/admin/room/delete/{id}(id=${r.id})}"
+                                          style="display:inline;"
+                                          onsubmit="return confirm('Delete this room?')">
+                                        <button type="submit" class="btn-danger-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(rooms)}">
+                                <td colspan="4" style="text-align:center;color:#94a3b8;">No rooms added yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ── Admin Settings ── -->
+                <div class="admin-card" id="settings-section">
+                    <h2><i class="fas fa-cog"></i> Admin Settings</h2>
+                    <form method="POST" th:action="@{/admin/profile/update}">
+                        <div class="form-group">
+                            <label>Admin Login Email</label>
+                            <input type="email" name="adminEmail" th:value="${adminEmail}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label>New Password <small style="color:#94a3b8;">(leave blank to keep current)</small></label>
+                            <input type="password" name="adminPassword" placeholder="••••••••"
+                                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&amp;*(),.?&quot;:{}|&lt;&gt;]).{8,}"
+                                   title="Must be 8+ chars with uppercase, lowercase, number and special character."/>
+                        </div>
+                        <button type="submit" class="btn-info">Update Credentials</button>
+                    </form>
+                </div>
+
+            </div><!-- /admin-left -->
+
+            <!-- RIGHT COLUMN: Bookings -->
+            <div class="admin-right" id="bookings-section">
+                <div class="admin-card full-height">
+                    <h2><i class="fas fa-calendar-alt"></i> Recent Bookings</h2>
+                    <div class="table-scroll">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Email</th>
+                                    <th>Room</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Guests</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="b : ${bookings}">
+                                    <td th:text="${b.user.fullname}">Name</td>
+                                    <td th:text="${b.user.email}">email</td>
+                                    <td th:text="${b.roomName}">Room</td>
+                                    <td th:text="${#temporals.format(b.checkIn, 'dd MMM yyyy')}">Date</td>
+                                    <td th:text="${#temporals.format(b.checkOut, 'dd MMM yyyy')}">Date</td>
+                                    <td th:text="${b.guests}">0</td>
+                                    <td>
+                                        <span th:class="'badge badge-' + ${b.status}"
+                                              th:text="${#strings.capitalize(b.status)}">confirmed</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(bookings)}">
+                                    <td colspan="7" style="text-align:center;color:#94a3b8;">No bookings yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /admin-grid -->
+    </main>
+</div>
+
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>
